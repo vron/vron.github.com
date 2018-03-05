@@ -121,6 +121,7 @@
             }
             function change() {
                 let gg = gc()
+                console.log("pushing")
                 window.history.pushState({state:Math.random()},"", "/lamp/?desc=" + encodeURI(JSON.stringify(gg)));
                 dwg.setGeometry(gg)
             }

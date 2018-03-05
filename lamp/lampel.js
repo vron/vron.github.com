@@ -27,6 +27,7 @@ var lampel = function(window, lampjs, parent, geom) {
 	
 	function creategeom(desc, scene, material) {
 		let g = lampjs.GenerateMesh(desc)
+		console.log("radius height length", g.Radius, g.Height, g.Length)
 		for(var i = 0; i < g.No; i++) {
 			scene.add(bgeom(material, g.V1, g.T1, g.A*(2*i)))
 			scene.add(bgeom(material, g.V2, g.T2, g.A*(2*i+1)))

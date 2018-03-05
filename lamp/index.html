@@ -57,8 +57,48 @@
             <div class="row">
                 <span>Resolution:  <input id="res" type="number" value="15" onchange="change()"></span>
             </div>
+            <div class="row">
+                <span>Scale:  <input id="sc" type="number" value="1.0" onchange="change()"></span>
+            </div>
         </form>
         <script>
+            function getQueryParams(qs) {
+                qs = qs.split('+').join(' ');
+                var params = {},
+                    tokens,
+                    re = /[?&]?([^=]+)=([^&]*)/g;
+
+                while (tokens = re.exec(qs)) {
+                    params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+                }
+
+                return params;
+            }
+
+            var query = getQueryParams(document.location.search);
+            if(query.desc) {
+            let dd = JSON.parse(query.desc)
+            console.log("START", dd);
+
+            // Set the form on load
+            function s(id, v) {
+                return document.getElementById(id).value = v
+            }
+            s("r", dd.radius)
+            s("sa", dd.startAlpha)
+            s("a", dd.dAlpha)
+            s("no", dd.noSteps)
+            s("c", dd.cDepth)
+            s("st", dd.noStripes)
+            s("t", dd.t)
+            [s("l1",dd.ls[0]),s("l2",dd.ls[1]),s("l3",dd.ls[2])]
+            s("w1",dd.wr[0])
+            s("w2",dd.wr[1])
+            s("w3",dd.wr[2])
+
+            s("res", dd.res)
+            s("sc", dd.sc)
+        }
             var dwg
             function g(id) {
                 return document.getElementById(id).value*1
@@ -66,20 +106,23 @@
             function gc() {
                 let conf = {
                     radius: g("r"),
-                    startAlpha: g("sa")/180*3.1415,
-                    dAlpha: g("a")/180*3.1415,
+                    startAlpha: g("sa"),
+                    dAlpha: g("a"),
                     noSteps: g("no"),
                     cDepth: g("c"),
                     noStripes: g("st"),
                     t: g("t"),
                     ls: [g("l1"),g("l2"),g("l3")],
                     wr: [g("w1"),g("w2"),g("w3")],
-                    res: g("res")
+                    res: g("res"),
+                    sc: g("sc"),
                 }
                 return conf
             }
             function change() {
-                dwg.setGeometry(gc())
+                let gg = gc()
+                window.history.pushState({state:Math.random()},"", "/?desc=" + encodeURI(JSON.stringify(gg)));
+                dwg.setGeometry(gg)
             }
             dwg = lampel(
                 window,

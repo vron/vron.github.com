@@ -19168,13 +19168,13 @@ $packages["ogeman.com/geometry/line2d"] = (function() {
 	return $pkg;
 })();
 $packages["ogeman.com/lamp"] = (function() {
-	var $pkg = {}, $init, floats, math, poly, line2d, sort, Config, arrayType, sliceType, arrayType$1, sliceType$1, sliceType$2, arrayType$2, sliceType$3, sliceType$4, arrayType$3, sliceType$5, findoff, defsin, fbsteps, interp, buildSteps, GenerateMesh, mbuild, GenerateOutline, eq, leq, le, unique, sinterp, linterp;
+	var $pkg = {}, $init, floats, math, poly, line2d, sort, Config, arrayType, sliceType, arrayType$1, sliceType$1, sliceType$2, arrayType$2, sliceType$3, sliceType$4, arrayType$3, sliceType$5, sliceType$6, findoff, defsin, fbsteps, interp, buildSteps, ran, GenerateMesh, mbuild, GenerateOutline, scale, eq, leq, le, unique, sinterp, linterp;
 	floats = $packages["gonum.org/v1/gonum/floats"];
 	math = $packages["math"];
 	poly = $packages["ogeman.com/emath/poly"];
 	line2d = $packages["ogeman.com/geometry/line2d"];
 	sort = $packages["sort"];
-	Config = $pkg.Config = $newType(0, $kindStruct, "lamp.Config", true, "ogeman.com/lamp", true, function(Radius_, StartAlpha_, DAlpha_, NoSteps_, CDepth_, NoStripes_, T_, Ls_, Wr_, Res_) {
+	Config = $pkg.Config = $newType(0, $kindStruct, "lamp.Config", true, "ogeman.com/lamp", true, function(Radius_, StartAlpha_, DAlpha_, NoSteps_, CDepth_, NoStripes_, T_, Ls_, Wr_, Res_, Scale_) {
 		this.$val = this;
 		if (arguments.length === 0) {
 			this.Radius = 0;
@@ -19187,6 +19187,7 @@ $packages["ogeman.com/lamp"] = (function() {
 			this.Ls = arrayType.zero();
 			this.Wr = arrayType.zero();
 			this.Res = 0;
+			this.Scale = 0;
 			return;
 		}
 		this.Radius = Radius_;
@@ -19199,6 +19200,7 @@ $packages["ogeman.com/lamp"] = (function() {
 		this.Ls = Ls_;
 		this.Wr = Wr_;
 		this.Res = Res_;
+		this.Scale = Scale_;
 	});
 	arrayType = $arrayType($Float64, 3);
 	sliceType = $sliceType($Float64);
@@ -19210,6 +19212,7 @@ $packages["ogeman.com/lamp"] = (function() {
 	sliceType$4 = $sliceType($Int);
 	arrayType$3 = $arrayType(arrayType$1, 2);
 	sliceType$5 = $sliceType(arrayType$3);
+	sliceType$6 = $sliceType(sliceType);
 	findoff = function(radius, x1, y1, x2, y2) {
 		var Mx, My, _i, _i$1, _i$2, _i$3, _ref, _ref$1, _ref$2, _ref$3, _tmp, _tmp$1, _tmp$2, _tmp$3, _tmp$4, _tmp$5, mid, mx, my, ox, oy, radius, v, v$1, v$2, v$3, x1, x2, y1, y2;
 		ox = 0;
@@ -19595,15 +19598,37 @@ $packages["ogeman.com/lamp"] = (function() {
 		$s = -1; return [l1o, w1o];
 		/* */ } return; } if ($f === undefined) { $f = { $blk: buildSteps }; } $f._i = _i; $f._i$1 = _i$1; $f._i$2 = _i$2; $f._i$3 = _i$3; $f._i$4 = _i$4; $f._i$5 = _i$5; $f._i$6 = _i$6; $f._i$7 = _i$7; $f._ref = _ref; $f._ref$1 = _ref$1; $f._ref$2 = _ref$2; $f._ref$3 = _ref$3; $f._ref$4 = _ref$4; $f._ref$5 = _ref$5; $f._ref$6 = _ref$6; $f._ref$7 = _ref$7; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f.a = a; $f.angles = angles; $f.c = c; $f.i = i; $f.i$1 = i$1; $f.i$2 = i$2; $f.i$3 = i$3; $f.i$4 = i$4; $f.ip = ip; $f.ip$1 = ip$1; $f.j = j; $f.j$1 = j$1; $f.l = l; $f.l$1 = l$1; $f.l$2 = l$2; $f.l$3 = l$3; $f.l$4 = l$4; $f.l$5 = l$5; $f.l1 = l1; $f.l1o = l1o; $f.locs = locs; $f.max = max; $f.mi = mi; $f.min = min; $f.ok = ok; $f.ok$1 = ok$1; $f.p1 = p1; $f.p1_ = p1_; $f.p2 = p2; $f.p2_ = p2_; $f.points = points; $f.si = si; $f.sp = sp; $f.ti = ti; $f.w = w; $f.w1 = w1; $f.w1o = w1o; $f.x = x; $f.x$1 = x$1; $f.x$10 = x$10; $f.x$11 = x$11; $f.x$2 = x$2; $f.x$3 = x$3; $f.x$4 = x$4; $f.x$5 = x$5; $f.x$6 = x$6; $f.x$7 = x$7; $f.x$8 = x$8; $f.x$9 = x$9; $f.x1 = x1; $f.y1 = y1; $f.$s = $s; $f.$r = $r; return $f;
 	};
+	ran = function(a) {
+		var _i, _ref, a, max, min, x;
+		min = 1.7976931348623157e+308;
+		max = -1.7976931348623157e+308;
+		_ref = a;
+		_i = 0;
+		while (true) {
+			if (!(_i < _ref.$length)) { break; }
+			x = ((_i < 0 || _i >= _ref.$length) ? ($throwRuntimeError("index out of range"), undefined) : _ref.$array[_ref.$offset + _i]);
+			if (x > max) {
+				max = x;
+			}
+			if (x < min) {
+				min = x;
+			}
+			_i++;
+		}
+		return max - min;
+	};
 	GenerateMesh = function(c) {
-		var _i, _i$1, _r, _ref, _ref$1, _tmp, _tmp$1, _tmp$2, _tmp$3, _tmp$4, _tmp$5, _tmp$6, _tmp$7, _tuple, a, a$1, c, c$1, c$2, i, i$1, i$2, i$3, l1, l2, no, ra, s, s$1, t, t$1, t1, t2, ui, ui$1, v1, v2, w1, w2, x, x$1, x$10, x$11, x$12, x$13, x$14, x$15, x$16, x$17, x$18, x$19, x$2, x$20, x$21, x$22, x$23, x$24, x$25, x$3, x$4, x$5, x$6, x$7, x$8, x$9, x1, x2, y1, y2, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _i$1 = $f._i$1; _r = $f._r; _ref = $f._ref; _ref$1 = $f._ref$1; _tmp = $f._tmp; _tmp$1 = $f._tmp$1; _tmp$2 = $f._tmp$2; _tmp$3 = $f._tmp$3; _tmp$4 = $f._tmp$4; _tmp$5 = $f._tmp$5; _tmp$6 = $f._tmp$6; _tmp$7 = $f._tmp$7; _tuple = $f._tuple; a = $f.a; a$1 = $f.a$1; c = $f.c; c$1 = $f.c$1; c$2 = $f.c$2; i = $f.i; i$1 = $f.i$1; i$2 = $f.i$2; i$3 = $f.i$3; l1 = $f.l1; l2 = $f.l2; no = $f.no; ra = $f.ra; s = $f.s; s$1 = $f.s$1; t = $f.t; t$1 = $f.t$1; t1 = $f.t1; t2 = $f.t2; ui = $f.ui; ui$1 = $f.ui$1; v1 = $f.v1; v2 = $f.v2; w1 = $f.w1; w2 = $f.w2; x = $f.x; x$1 = $f.x$1; x$10 = $f.x$10; x$11 = $f.x$11; x$12 = $f.x$12; x$13 = $f.x$13; x$14 = $f.x$14; x$15 = $f.x$15; x$16 = $f.x$16; x$17 = $f.x$17; x$18 = $f.x$18; x$19 = $f.x$19; x$2 = $f.x$2; x$20 = $f.x$20; x$21 = $f.x$21; x$22 = $f.x$22; x$23 = $f.x$23; x$24 = $f.x$24; x$25 = $f.x$25; x$3 = $f.x$3; x$4 = $f.x$4; x$5 = $f.x$5; x$6 = $f.x$6; x$7 = $f.x$7; x$8 = $f.x$8; x$9 = $f.x$9; x1 = $f.x1; x2 = $f.x2; y1 = $f.y1; y2 = $f.y2; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var _i, _i$1, _i$2, _i$3, _r, _ref, _ref$1, _ref$2, _ref$3, _tmp, _tmp$1, _tmp$2, _tmp$3, _tmp$4, _tmp$5, _tmp$6, _tmp$7, _tuple, a, a$1, c, c$1, c$2, h, h$1, height, i, i$1, i$2, i$3, l1, l2, length, no, ra, radius, s, s$1, t, t$1, t1, t2, ui, ui$1, v1, v2, w1, w2, x, x$1, x$10, x$11, x$12, x$13, x$14, x$15, x$16, x$17, x$18, x$19, x$2, x$20, x$21, x$22, x$23, x$24, x$25, x$26, x$27, x$3, x$4, x$5, x$6, x$7, x$8, x$9, x1, x2, y1, y2, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _i$1 = $f._i$1; _i$2 = $f._i$2; _i$3 = $f._i$3; _r = $f._r; _ref = $f._ref; _ref$1 = $f._ref$1; _ref$2 = $f._ref$2; _ref$3 = $f._ref$3; _tmp = $f._tmp; _tmp$1 = $f._tmp$1; _tmp$2 = $f._tmp$2; _tmp$3 = $f._tmp$3; _tmp$4 = $f._tmp$4; _tmp$5 = $f._tmp$5; _tmp$6 = $f._tmp$6; _tmp$7 = $f._tmp$7; _tuple = $f._tuple; a = $f.a; a$1 = $f.a$1; c = $f.c; c$1 = $f.c$1; c$2 = $f.c$2; h = $f.h; h$1 = $f.h$1; height = $f.height; i = $f.i; i$1 = $f.i$1; i$2 = $f.i$2; i$3 = $f.i$3; l1 = $f.l1; l2 = $f.l2; length = $f.length; no = $f.no; ra = $f.ra; radius = $f.radius; s = $f.s; s$1 = $f.s$1; t = $f.t; t$1 = $f.t$1; t1 = $f.t1; t2 = $f.t2; ui = $f.ui; ui$1 = $f.ui$1; v1 = $f.v1; v2 = $f.v2; w1 = $f.w1; w2 = $f.w2; x = $f.x; x$1 = $f.x$1; x$10 = $f.x$10; x$11 = $f.x$11; x$12 = $f.x$12; x$13 = $f.x$13; x$14 = $f.x$14; x$15 = $f.x$15; x$16 = $f.x$16; x$17 = $f.x$17; x$18 = $f.x$18; x$19 = $f.x$19; x$2 = $f.x$2; x$20 = $f.x$20; x$21 = $f.x$21; x$22 = $f.x$22; x$23 = $f.x$23; x$24 = $f.x$24; x$25 = $f.x$25; x$26 = $f.x$26; x$27 = $f.x$27; x$3 = $f.x$3; x$4 = $f.x$4; x$5 = $f.x$5; x$6 = $f.x$6; x$7 = $f.x$7; x$8 = $f.x$8; x$9 = $f.x$9; x1 = $f.x1; x2 = $f.x2; y1 = $f.y1; y2 = $f.y2; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		v1 = sliceType$2.nil;
 		v2 = sliceType$2.nil;
 		t1 = sliceType$3.nil;
 		t2 = sliceType$3.nil;
 		ra = 0;
 		no = 0;
+		radius = 0;
+		height = 0;
+		length = 0;
 		_r = fbsteps($clone(c, Config)); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		_tuple = _r;
 		l1 = _tuple[0];
@@ -19614,6 +19639,36 @@ $packages["ogeman.com/lamp"] = (function() {
 		w2 = _tuple[5];
 		x2 = _tuple[6];
 		y2 = _tuple[7];
+		_ref = x1;
+		_i = 0;
+		while (true) {
+			if (!(_i < _ref.$length)) { break; }
+			x = ((_i < 0 || _i >= _ref.$length) ? ($throwRuntimeError("index out of range"), undefined) : _ref.$array[_ref.$offset + _i]);
+			if (x > radius) {
+				radius = x;
+			}
+			_i++;
+		}
+		_ref$1 = x2;
+		_i$1 = 0;
+		while (true) {
+			if (!(_i$1 < _ref$1.$length)) { break; }
+			x$1 = ((_i$1 < 0 || _i$1 >= _ref$1.$length) ? ($throwRuntimeError("index out of range"), undefined) : _ref$1.$array[_ref$1.$offset + _i$1]);
+			if (x$1 > radius) {
+				radius = x$1;
+			}
+			_i$1++;
+		}
+		height = ran(y1);
+		h = ran(y2);
+		if (h > height) {
+			height = h;
+		}
+		length = ran(l1);
+		h$1 = ran(l2);
+		if (h$1 > length) {
+			length = h$1;
+		}
 		_tmp = $makeSlice(sliceType$2, ($imul(4, l1.$length)));
 		_tmp$1 = $makeSlice(sliceType$2, ($imul(4, l2.$length)));
 		v1 = _tmp;
@@ -19622,11 +19677,11 @@ $packages["ogeman.com/lamp"] = (function() {
 		_tmp$3 = $makeSlice(sliceType$3, 0, 100);
 		t1 = _tmp$2;
 		t2 = _tmp$3;
-		_ref = l1;
-		_i = 0;
+		_ref$2 = l1;
+		_i$2 = 0;
 		while (true) {
-			if (!(_i < _ref.$length)) { break; }
-			i = _i;
+			if (!(_i$2 < _ref$2.$length)) { break; }
+			i = _i$2;
 			t = c.T * 0.5;
 			ui = i;
 			if (i === 0) {
@@ -19634,7 +19689,7 @@ $packages["ogeman.com/lamp"] = (function() {
 			} else if (i === (l1.$length - 1 >> 0)) {
 				ui = i - 1 >> 0;
 			}
-			a = math.Atan2((x = ui + 1 >> 0, ((x < 0 || x >= y1.$length) ? ($throwRuntimeError("index out of range"), undefined) : y1.$array[y1.$offset + x])) - (x$1 = ui - 1 >> 0, ((x$1 < 0 || x$1 >= y1.$length) ? ($throwRuntimeError("index out of range"), undefined) : y1.$array[y1.$offset + x$1])), (x$2 = ui + 1 >> 0, ((x$2 < 0 || x$2 >= x1.$length) ? ($throwRuntimeError("index out of range"), undefined) : x1.$array[x1.$offset + x$2])) - (x$3 = ui - 1 >> 0, ((x$3 < 0 || x$3 >= x1.$length) ? ($throwRuntimeError("index out of range"), undefined) : x1.$array[x1.$offset + x$3]))) + 1.5707963267948966;
+			a = math.Atan2((x$2 = ui + 1 >> 0, ((x$2 < 0 || x$2 >= y1.$length) ? ($throwRuntimeError("index out of range"), undefined) : y1.$array[y1.$offset + x$2])) - (x$3 = ui - 1 >> 0, ((x$3 < 0 || x$3 >= y1.$length) ? ($throwRuntimeError("index out of range"), undefined) : y1.$array[y1.$offset + x$3])), (x$4 = ui + 1 >> 0, ((x$4 < 0 || x$4 >= x1.$length) ? ($throwRuntimeError("index out of range"), undefined) : x1.$array[x1.$offset + x$4])) - (x$5 = ui - 1 >> 0, ((x$5 < 0 || x$5 >= x1.$length) ? ($throwRuntimeError("index out of range"), undefined) : x1.$array[x1.$offset + x$5]))) + 1.5707963267948966;
 			_tmp$4 = math.Cos(a) * t;
 			_tmp$5 = math.Sin(a) * t;
 			c$1 = _tmp$4;
@@ -19642,22 +19697,22 @@ $packages["ogeman.com/lamp"] = (function() {
 			((i < 0 || i >= v1.$length) ? ($throwRuntimeError("index out of range"), undefined) : v1.$array[v1.$offset + i])[0] = ((i < 0 || i >= x1.$length) ? ($throwRuntimeError("index out of range"), undefined) : x1.$array[x1.$offset + i]) + c$1;
 			((i < 0 || i >= v1.$length) ? ($throwRuntimeError("index out of range"), undefined) : v1.$array[v1.$offset + i])[1] = ((i < 0 || i >= w1.$length) ? ($throwRuntimeError("index out of range"), undefined) : w1.$array[w1.$offset + i]);
 			((i < 0 || i >= v1.$length) ? ($throwRuntimeError("index out of range"), undefined) : v1.$array[v1.$offset + i])[2] = ((i < 0 || i >= y1.$length) ? ($throwRuntimeError("index out of range"), undefined) : y1.$array[y1.$offset + i]) + s;
-			(x$4 = l1.$length + i >> 0, ((x$4 < 0 || x$4 >= v1.$length) ? ($throwRuntimeError("index out of range"), undefined) : v1.$array[v1.$offset + x$4]))[0] = ((i < 0 || i >= x1.$length) ? ($throwRuntimeError("index out of range"), undefined) : x1.$array[x1.$offset + i]) + c$1;
-			(x$5 = l1.$length + i >> 0, ((x$5 < 0 || x$5 >= v1.$length) ? ($throwRuntimeError("index out of range"), undefined) : v1.$array[v1.$offset + x$5]))[1] = -((i < 0 || i >= w1.$length) ? ($throwRuntimeError("index out of range"), undefined) : w1.$array[w1.$offset + i]);
-			(x$6 = l1.$length + i >> 0, ((x$6 < 0 || x$6 >= v1.$length) ? ($throwRuntimeError("index out of range"), undefined) : v1.$array[v1.$offset + x$6]))[2] = ((i < 0 || i >= y1.$length) ? ($throwRuntimeError("index out of range"), undefined) : y1.$array[y1.$offset + i]) + s;
-			(x$7 = ($imul(2, l1.$length)) + i >> 0, ((x$7 < 0 || x$7 >= v1.$length) ? ($throwRuntimeError("index out of range"), undefined) : v1.$array[v1.$offset + x$7]))[0] = ((i < 0 || i >= x1.$length) ? ($throwRuntimeError("index out of range"), undefined) : x1.$array[x1.$offset + i]) - c$1;
-			(x$8 = ($imul(2, l1.$length)) + i >> 0, ((x$8 < 0 || x$8 >= v1.$length) ? ($throwRuntimeError("index out of range"), undefined) : v1.$array[v1.$offset + x$8]))[1] = ((i < 0 || i >= w1.$length) ? ($throwRuntimeError("index out of range"), undefined) : w1.$array[w1.$offset + i]);
-			(x$9 = ($imul(2, l1.$length)) + i >> 0, ((x$9 < 0 || x$9 >= v1.$length) ? ($throwRuntimeError("index out of range"), undefined) : v1.$array[v1.$offset + x$9]))[2] = ((i < 0 || i >= y1.$length) ? ($throwRuntimeError("index out of range"), undefined) : y1.$array[y1.$offset + i]) - s;
-			(x$10 = ($imul(3, l1.$length)) + i >> 0, ((x$10 < 0 || x$10 >= v1.$length) ? ($throwRuntimeError("index out of range"), undefined) : v1.$array[v1.$offset + x$10]))[0] = ((i < 0 || i >= x1.$length) ? ($throwRuntimeError("index out of range"), undefined) : x1.$array[x1.$offset + i]) - c$1;
-			(x$11 = ($imul(3, l1.$length)) + i >> 0, ((x$11 < 0 || x$11 >= v1.$length) ? ($throwRuntimeError("index out of range"), undefined) : v1.$array[v1.$offset + x$11]))[1] = -((i < 0 || i >= w1.$length) ? ($throwRuntimeError("index out of range"), undefined) : w1.$array[w1.$offset + i]);
-			(x$12 = ($imul(3, l1.$length)) + i >> 0, ((x$12 < 0 || x$12 >= v1.$length) ? ($throwRuntimeError("index out of range"), undefined) : v1.$array[v1.$offset + x$12]))[2] = ((i < 0 || i >= y1.$length) ? ($throwRuntimeError("index out of range"), undefined) : y1.$array[y1.$offset + i]) - s;
-			_i++;
+			(x$6 = l1.$length + i >> 0, ((x$6 < 0 || x$6 >= v1.$length) ? ($throwRuntimeError("index out of range"), undefined) : v1.$array[v1.$offset + x$6]))[0] = ((i < 0 || i >= x1.$length) ? ($throwRuntimeError("index out of range"), undefined) : x1.$array[x1.$offset + i]) + c$1;
+			(x$7 = l1.$length + i >> 0, ((x$7 < 0 || x$7 >= v1.$length) ? ($throwRuntimeError("index out of range"), undefined) : v1.$array[v1.$offset + x$7]))[1] = -((i < 0 || i >= w1.$length) ? ($throwRuntimeError("index out of range"), undefined) : w1.$array[w1.$offset + i]);
+			(x$8 = l1.$length + i >> 0, ((x$8 < 0 || x$8 >= v1.$length) ? ($throwRuntimeError("index out of range"), undefined) : v1.$array[v1.$offset + x$8]))[2] = ((i < 0 || i >= y1.$length) ? ($throwRuntimeError("index out of range"), undefined) : y1.$array[y1.$offset + i]) + s;
+			(x$9 = ($imul(2, l1.$length)) + i >> 0, ((x$9 < 0 || x$9 >= v1.$length) ? ($throwRuntimeError("index out of range"), undefined) : v1.$array[v1.$offset + x$9]))[0] = ((i < 0 || i >= x1.$length) ? ($throwRuntimeError("index out of range"), undefined) : x1.$array[x1.$offset + i]) - c$1;
+			(x$10 = ($imul(2, l1.$length)) + i >> 0, ((x$10 < 0 || x$10 >= v1.$length) ? ($throwRuntimeError("index out of range"), undefined) : v1.$array[v1.$offset + x$10]))[1] = ((i < 0 || i >= w1.$length) ? ($throwRuntimeError("index out of range"), undefined) : w1.$array[w1.$offset + i]);
+			(x$11 = ($imul(2, l1.$length)) + i >> 0, ((x$11 < 0 || x$11 >= v1.$length) ? ($throwRuntimeError("index out of range"), undefined) : v1.$array[v1.$offset + x$11]))[2] = ((i < 0 || i >= y1.$length) ? ($throwRuntimeError("index out of range"), undefined) : y1.$array[y1.$offset + i]) - s;
+			(x$12 = ($imul(3, l1.$length)) + i >> 0, ((x$12 < 0 || x$12 >= v1.$length) ? ($throwRuntimeError("index out of range"), undefined) : v1.$array[v1.$offset + x$12]))[0] = ((i < 0 || i >= x1.$length) ? ($throwRuntimeError("index out of range"), undefined) : x1.$array[x1.$offset + i]) - c$1;
+			(x$13 = ($imul(3, l1.$length)) + i >> 0, ((x$13 < 0 || x$13 >= v1.$length) ? ($throwRuntimeError("index out of range"), undefined) : v1.$array[v1.$offset + x$13]))[1] = -((i < 0 || i >= w1.$length) ? ($throwRuntimeError("index out of range"), undefined) : w1.$array[w1.$offset + i]);
+			(x$14 = ($imul(3, l1.$length)) + i >> 0, ((x$14 < 0 || x$14 >= v1.$length) ? ($throwRuntimeError("index out of range"), undefined) : v1.$array[v1.$offset + x$14]))[2] = ((i < 0 || i >= y1.$length) ? ($throwRuntimeError("index out of range"), undefined) : y1.$array[y1.$offset + i]) - s;
+			_i$2++;
 		}
-		_ref$1 = l2;
-		_i$1 = 0;
+		_ref$3 = l2;
+		_i$3 = 0;
 		while (true) {
-			if (!(_i$1 < _ref$1.$length)) { break; }
-			i$1 = _i$1;
+			if (!(_i$3 < _ref$3.$length)) { break; }
+			i$1 = _i$3;
 			t$1 = c.T * 0.5;
 			ui$1 = i$1;
 			if (i$1 === 0) {
@@ -19665,7 +19720,7 @@ $packages["ogeman.com/lamp"] = (function() {
 			} else if (i$1 === (l2.$length - 1 >> 0)) {
 				ui$1 = i$1 - 1 >> 0;
 			}
-			a$1 = math.Atan2((x$13 = ui$1 + 1 >> 0, ((x$13 < 0 || x$13 >= y2.$length) ? ($throwRuntimeError("index out of range"), undefined) : y2.$array[y2.$offset + x$13])) - (x$14 = ui$1 - 1 >> 0, ((x$14 < 0 || x$14 >= y2.$length) ? ($throwRuntimeError("index out of range"), undefined) : y2.$array[y2.$offset + x$14])), (x$15 = ui$1 + 1 >> 0, ((x$15 < 0 || x$15 >= x2.$length) ? ($throwRuntimeError("index out of range"), undefined) : x2.$array[x2.$offset + x$15])) - (x$16 = ui$1 - 1 >> 0, ((x$16 < 0 || x$16 >= x2.$length) ? ($throwRuntimeError("index out of range"), undefined) : x2.$array[x2.$offset + x$16]))) + 1.5707963267948966;
+			a$1 = math.Atan2((x$15 = ui$1 + 1 >> 0, ((x$15 < 0 || x$15 >= y2.$length) ? ($throwRuntimeError("index out of range"), undefined) : y2.$array[y2.$offset + x$15])) - (x$16 = ui$1 - 1 >> 0, ((x$16 < 0 || x$16 >= y2.$length) ? ($throwRuntimeError("index out of range"), undefined) : y2.$array[y2.$offset + x$16])), (x$17 = ui$1 + 1 >> 0, ((x$17 < 0 || x$17 >= x2.$length) ? ($throwRuntimeError("index out of range"), undefined) : x2.$array[x2.$offset + x$17])) - (x$18 = ui$1 - 1 >> 0, ((x$18 < 0 || x$18 >= x2.$length) ? ($throwRuntimeError("index out of range"), undefined) : x2.$array[x2.$offset + x$18]))) + 1.5707963267948966;
 			_tmp$6 = math.Cos(a$1) * t$1;
 			_tmp$7 = math.Sin(a$1) * t$1;
 			c$2 = _tmp$6;
@@ -19673,16 +19728,16 @@ $packages["ogeman.com/lamp"] = (function() {
 			((i$1 < 0 || i$1 >= v2.$length) ? ($throwRuntimeError("index out of range"), undefined) : v2.$array[v2.$offset + i$1])[0] = ((i$1 < 0 || i$1 >= x2.$length) ? ($throwRuntimeError("index out of range"), undefined) : x2.$array[x2.$offset + i$1]) + c$2;
 			((i$1 < 0 || i$1 >= v2.$length) ? ($throwRuntimeError("index out of range"), undefined) : v2.$array[v2.$offset + i$1])[1] = ((i$1 < 0 || i$1 >= w2.$length) ? ($throwRuntimeError("index out of range"), undefined) : w2.$array[w2.$offset + i$1]);
 			((i$1 < 0 || i$1 >= v2.$length) ? ($throwRuntimeError("index out of range"), undefined) : v2.$array[v2.$offset + i$1])[2] = ((i$1 < 0 || i$1 >= y2.$length) ? ($throwRuntimeError("index out of range"), undefined) : y2.$array[y2.$offset + i$1]) + s$1;
-			(x$17 = l2.$length + i$1 >> 0, ((x$17 < 0 || x$17 >= v2.$length) ? ($throwRuntimeError("index out of range"), undefined) : v2.$array[v2.$offset + x$17]))[0] = ((i$1 < 0 || i$1 >= x2.$length) ? ($throwRuntimeError("index out of range"), undefined) : x2.$array[x2.$offset + i$1]) + c$2;
-			(x$18 = l2.$length + i$1 >> 0, ((x$18 < 0 || x$18 >= v2.$length) ? ($throwRuntimeError("index out of range"), undefined) : v2.$array[v2.$offset + x$18]))[1] = -((i$1 < 0 || i$1 >= w2.$length) ? ($throwRuntimeError("index out of range"), undefined) : w2.$array[w2.$offset + i$1]);
-			(x$19 = l2.$length + i$1 >> 0, ((x$19 < 0 || x$19 >= v2.$length) ? ($throwRuntimeError("index out of range"), undefined) : v2.$array[v2.$offset + x$19]))[2] = ((i$1 < 0 || i$1 >= y2.$length) ? ($throwRuntimeError("index out of range"), undefined) : y2.$array[y2.$offset + i$1]) + s$1;
-			(x$20 = ($imul(2, l2.$length)) + i$1 >> 0, ((x$20 < 0 || x$20 >= v2.$length) ? ($throwRuntimeError("index out of range"), undefined) : v2.$array[v2.$offset + x$20]))[0] = ((i$1 < 0 || i$1 >= x2.$length) ? ($throwRuntimeError("index out of range"), undefined) : x2.$array[x2.$offset + i$1]) - c$2;
-			(x$21 = ($imul(2, l2.$length)) + i$1 >> 0, ((x$21 < 0 || x$21 >= v2.$length) ? ($throwRuntimeError("index out of range"), undefined) : v2.$array[v2.$offset + x$21]))[1] = ((i$1 < 0 || i$1 >= w2.$length) ? ($throwRuntimeError("index out of range"), undefined) : w2.$array[w2.$offset + i$1]);
-			(x$22 = ($imul(2, l2.$length)) + i$1 >> 0, ((x$22 < 0 || x$22 >= v2.$length) ? ($throwRuntimeError("index out of range"), undefined) : v2.$array[v2.$offset + x$22]))[2] = ((i$1 < 0 || i$1 >= y2.$length) ? ($throwRuntimeError("index out of range"), undefined) : y2.$array[y2.$offset + i$1]) - s$1;
-			(x$23 = ($imul(3, l2.$length)) + i$1 >> 0, ((x$23 < 0 || x$23 >= v2.$length) ? ($throwRuntimeError("index out of range"), undefined) : v2.$array[v2.$offset + x$23]))[0] = ((i$1 < 0 || i$1 >= x2.$length) ? ($throwRuntimeError("index out of range"), undefined) : x2.$array[x2.$offset + i$1]) - c$2;
-			(x$24 = ($imul(3, l2.$length)) + i$1 >> 0, ((x$24 < 0 || x$24 >= v2.$length) ? ($throwRuntimeError("index out of range"), undefined) : v2.$array[v2.$offset + x$24]))[1] = -((i$1 < 0 || i$1 >= w2.$length) ? ($throwRuntimeError("index out of range"), undefined) : w2.$array[w2.$offset + i$1]);
-			(x$25 = ($imul(3, l2.$length)) + i$1 >> 0, ((x$25 < 0 || x$25 >= v2.$length) ? ($throwRuntimeError("index out of range"), undefined) : v2.$array[v2.$offset + x$25]))[2] = ((i$1 < 0 || i$1 >= y2.$length) ? ($throwRuntimeError("index out of range"), undefined) : y2.$array[y2.$offset + i$1]) - s$1;
-			_i$1++;
+			(x$19 = l2.$length + i$1 >> 0, ((x$19 < 0 || x$19 >= v2.$length) ? ($throwRuntimeError("index out of range"), undefined) : v2.$array[v2.$offset + x$19]))[0] = ((i$1 < 0 || i$1 >= x2.$length) ? ($throwRuntimeError("index out of range"), undefined) : x2.$array[x2.$offset + i$1]) + c$2;
+			(x$20 = l2.$length + i$1 >> 0, ((x$20 < 0 || x$20 >= v2.$length) ? ($throwRuntimeError("index out of range"), undefined) : v2.$array[v2.$offset + x$20]))[1] = -((i$1 < 0 || i$1 >= w2.$length) ? ($throwRuntimeError("index out of range"), undefined) : w2.$array[w2.$offset + i$1]);
+			(x$21 = l2.$length + i$1 >> 0, ((x$21 < 0 || x$21 >= v2.$length) ? ($throwRuntimeError("index out of range"), undefined) : v2.$array[v2.$offset + x$21]))[2] = ((i$1 < 0 || i$1 >= y2.$length) ? ($throwRuntimeError("index out of range"), undefined) : y2.$array[y2.$offset + i$1]) + s$1;
+			(x$22 = ($imul(2, l2.$length)) + i$1 >> 0, ((x$22 < 0 || x$22 >= v2.$length) ? ($throwRuntimeError("index out of range"), undefined) : v2.$array[v2.$offset + x$22]))[0] = ((i$1 < 0 || i$1 >= x2.$length) ? ($throwRuntimeError("index out of range"), undefined) : x2.$array[x2.$offset + i$1]) - c$2;
+			(x$23 = ($imul(2, l2.$length)) + i$1 >> 0, ((x$23 < 0 || x$23 >= v2.$length) ? ($throwRuntimeError("index out of range"), undefined) : v2.$array[v2.$offset + x$23]))[1] = ((i$1 < 0 || i$1 >= w2.$length) ? ($throwRuntimeError("index out of range"), undefined) : w2.$array[w2.$offset + i$1]);
+			(x$24 = ($imul(2, l2.$length)) + i$1 >> 0, ((x$24 < 0 || x$24 >= v2.$length) ? ($throwRuntimeError("index out of range"), undefined) : v2.$array[v2.$offset + x$24]))[2] = ((i$1 < 0 || i$1 >= y2.$length) ? ($throwRuntimeError("index out of range"), undefined) : y2.$array[y2.$offset + i$1]) - s$1;
+			(x$25 = ($imul(3, l2.$length)) + i$1 >> 0, ((x$25 < 0 || x$25 >= v2.$length) ? ($throwRuntimeError("index out of range"), undefined) : v2.$array[v2.$offset + x$25]))[0] = ((i$1 < 0 || i$1 >= x2.$length) ? ($throwRuntimeError("index out of range"), undefined) : x2.$array[x2.$offset + i$1]) - c$2;
+			(x$26 = ($imul(3, l2.$length)) + i$1 >> 0, ((x$26 < 0 || x$26 >= v2.$length) ? ($throwRuntimeError("index out of range"), undefined) : v2.$array[v2.$offset + x$26]))[1] = -((i$1 < 0 || i$1 >= w2.$length) ? ($throwRuntimeError("index out of range"), undefined) : w2.$array[w2.$offset + i$1]);
+			(x$27 = ($imul(3, l2.$length)) + i$1 >> 0, ((x$27 < 0 || x$27 >= v2.$length) ? ($throwRuntimeError("index out of range"), undefined) : v2.$array[v2.$offset + x$27]))[2] = ((i$1 < 0 || i$1 >= y2.$length) ? ($throwRuntimeError("index out of range"), undefined) : y2.$array[y2.$offset + i$1]) - s$1;
+			_i$3++;
 		}
 		i$2 = 1;
 		while (true) {
@@ -19698,8 +19753,8 @@ $packages["ogeman.com/lamp"] = (function() {
 		}
 		ra = 3.141592653589793 / (c.NoStripes);
 		no = c.NoStripes;
-		$s = -1; return [v1, v2, t1, t2, ra, no];
-		/* */ } return; } if ($f === undefined) { $f = { $blk: GenerateMesh }; } $f._i = _i; $f._i$1 = _i$1; $f._r = _r; $f._ref = _ref; $f._ref$1 = _ref$1; $f._tmp = _tmp; $f._tmp$1 = _tmp$1; $f._tmp$2 = _tmp$2; $f._tmp$3 = _tmp$3; $f._tmp$4 = _tmp$4; $f._tmp$5 = _tmp$5; $f._tmp$6 = _tmp$6; $f._tmp$7 = _tmp$7; $f._tuple = _tuple; $f.a = a; $f.a$1 = a$1; $f.c = c; $f.c$1 = c$1; $f.c$2 = c$2; $f.i = i; $f.i$1 = i$1; $f.i$2 = i$2; $f.i$3 = i$3; $f.l1 = l1; $f.l2 = l2; $f.no = no; $f.ra = ra; $f.s = s; $f.s$1 = s$1; $f.t = t; $f.t$1 = t$1; $f.t1 = t1; $f.t2 = t2; $f.ui = ui; $f.ui$1 = ui$1; $f.v1 = v1; $f.v2 = v2; $f.w1 = w1; $f.w2 = w2; $f.x = x; $f.x$1 = x$1; $f.x$10 = x$10; $f.x$11 = x$11; $f.x$12 = x$12; $f.x$13 = x$13; $f.x$14 = x$14; $f.x$15 = x$15; $f.x$16 = x$16; $f.x$17 = x$17; $f.x$18 = x$18; $f.x$19 = x$19; $f.x$2 = x$2; $f.x$20 = x$20; $f.x$21 = x$21; $f.x$22 = x$22; $f.x$23 = x$23; $f.x$24 = x$24; $f.x$25 = x$25; $f.x$3 = x$3; $f.x$4 = x$4; $f.x$5 = x$5; $f.x$6 = x$6; $f.x$7 = x$7; $f.x$8 = x$8; $f.x$9 = x$9; $f.x1 = x1; $f.x2 = x2; $f.y1 = y1; $f.y2 = y2; $f.$s = $s; $f.$r = $r; return $f;
+		$s = -1; return [v1, v2, t1, t2, ra, no, radius, height, length];
+		/* */ } return; } if ($f === undefined) { $f = { $blk: GenerateMesh }; } $f._i = _i; $f._i$1 = _i$1; $f._i$2 = _i$2; $f._i$3 = _i$3; $f._r = _r; $f._ref = _ref; $f._ref$1 = _ref$1; $f._ref$2 = _ref$2; $f._ref$3 = _ref$3; $f._tmp = _tmp; $f._tmp$1 = _tmp$1; $f._tmp$2 = _tmp$2; $f._tmp$3 = _tmp$3; $f._tmp$4 = _tmp$4; $f._tmp$5 = _tmp$5; $f._tmp$6 = _tmp$6; $f._tmp$7 = _tmp$7; $f._tuple = _tuple; $f.a = a; $f.a$1 = a$1; $f.c = c; $f.c$1 = c$1; $f.c$2 = c$2; $f.h = h; $f.h$1 = h$1; $f.height = height; $f.i = i; $f.i$1 = i$1; $f.i$2 = i$2; $f.i$3 = i$3; $f.l1 = l1; $f.l2 = l2; $f.length = length; $f.no = no; $f.ra = ra; $f.radius = radius; $f.s = s; $f.s$1 = s$1; $f.t = t; $f.t$1 = t$1; $f.t1 = t1; $f.t2 = t2; $f.ui = ui; $f.ui$1 = ui$1; $f.v1 = v1; $f.v2 = v2; $f.w1 = w1; $f.w2 = w2; $f.x = x; $f.x$1 = x$1; $f.x$10 = x$10; $f.x$11 = x$11; $f.x$12 = x$12; $f.x$13 = x$13; $f.x$14 = x$14; $f.x$15 = x$15; $f.x$16 = x$16; $f.x$17 = x$17; $f.x$18 = x$18; $f.x$19 = x$19; $f.x$2 = x$2; $f.x$20 = x$20; $f.x$21 = x$21; $f.x$22 = x$22; $f.x$23 = x$23; $f.x$24 = x$24; $f.x$25 = x$25; $f.x$26 = x$26; $f.x$27 = x$27; $f.x$3 = x$3; $f.x$4 = x$4; $f.x$5 = x$5; $f.x$6 = x$6; $f.x$7 = x$7; $f.x$8 = x$8; $f.x$9 = x$9; $f.x1 = x1; $f.x2 = x2; $f.y1 = y1; $f.y2 = y2; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.GenerateMesh = GenerateMesh;
 	mbuild = function(t1, i, l) {
@@ -20101,10 +20156,29 @@ $packages["ogeman.com/lamp"] = (function() {
 			((i$16 < 0 || i$16 >= p2.$length) ? ($throwRuntimeError("index out of range"), undefined) : p2.$array[p2.$offset + i$16] = ((x$41 = i$16 - 1 >> 0, ((x$41 < 0 || x$41 >= p2.$length) ? ($throwRuntimeError("index out of range"), undefined) : p2.$array[p2.$offset + x$41])) + c[0].Res >> 0));
 			i$16 = i$16 + (1) >> 0;
 		}
+		scale(c[0].Scale, new sliceType$6([x1, y1, l1, w1, x2, y2, l2, w2]));
 		$s = -1; return [x1, y1, l1, w1, x2, y2, l2, w2, p1, p2];
 		/* */ } return; } if ($f === undefined) { $f = { $blk: GenerateOutline }; } $f._arg = _arg; $f._arg$1 = _arg$1; $f._arg$2 = _arg$2; $f._arg$3 = _arg$3; $f._i = _i; $f._i$1 = _i$1; $f._i$2 = _i$2; $f._i$3 = _i$3; $f._i$4 = _i$4; $f._i$5 = _i$5; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._ref = _ref; $f._ref$1 = _ref$1; $f._ref$2 = _ref$2; $f._ref$3 = _ref$3; $f._ref$4 = _ref$4; $f._ref$5 = _ref$5; $f._tmp = _tmp; $f._tmp$1 = _tmp$1; $f._tmp$10 = _tmp$10; $f._tmp$11 = _tmp$11; $f._tmp$12 = _tmp$12; $f._tmp$13 = _tmp$13; $f._tmp$14 = _tmp$14; $f._tmp$15 = _tmp$15; $f._tmp$16 = _tmp$16; $f._tmp$17 = _tmp$17; $f._tmp$18 = _tmp$18; $f._tmp$19 = _tmp$19; $f._tmp$2 = _tmp$2; $f._tmp$20 = _tmp$20; $f._tmp$21 = _tmp$21; $f._tmp$22 = _tmp$22; $f._tmp$23 = _tmp$23; $f._tmp$24 = _tmp$24; $f._tmp$25 = _tmp$25; $f._tmp$26 = _tmp$26; $f._tmp$27 = _tmp$27; $f._tmp$28 = _tmp$28; $f._tmp$29 = _tmp$29; $f._tmp$3 = _tmp$3; $f._tmp$30 = _tmp$30; $f._tmp$31 = _tmp$31; $f._tmp$32 = _tmp$32; $f._tmp$33 = _tmp$33; $f._tmp$34 = _tmp$34; $f._tmp$35 = _tmp$35; $f._tmp$36 = _tmp$36; $f._tmp$37 = _tmp$37; $f._tmp$38 = _tmp$38; $f._tmp$39 = _tmp$39; $f._tmp$4 = _tmp$4; $f._tmp$40 = _tmp$40; $f._tmp$41 = _tmp$41; $f._tmp$42 = _tmp$42; $f._tmp$43 = _tmp$43; $f._tmp$44 = _tmp$44; $f._tmp$45 = _tmp$45; $f._tmp$46 = _tmp$46; $f._tmp$47 = _tmp$47; $f._tmp$48 = _tmp$48; $f._tmp$49 = _tmp$49; $f._tmp$5 = _tmp$5; $f._tmp$50 = _tmp$50; $f._tmp$51 = _tmp$51; $f._tmp$52 = _tmp$52; $f._tmp$53 = _tmp$53; $f._tmp$54 = _tmp$54; $f._tmp$55 = _tmp$55; $f._tmp$56 = _tmp$56; $f._tmp$57 = _tmp$57; $f._tmp$58 = _tmp$58; $f._tmp$59 = _tmp$59; $f._tmp$6 = _tmp$6; $f._tmp$60 = _tmp$60; $f._tmp$61 = _tmp$61; $f._tmp$62 = _tmp$62; $f._tmp$63 = _tmp$63; $f._tmp$7 = _tmp$7; $f._tmp$8 = _tmp$8; $f._tmp$9 = _tmp$9; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f._tuple$2 = _tuple$2; $f._tuple$3 = _tuple$3; $f.a1 = a1; $f.a1$1 = a1$1; $f.a2 = a2; $f.a2$1 = a2$1; $f.a3 = a3; $f.alpha = alpha; $f.c = c; $f.dl = dl; $f.dx = dx; $f.dx1 = dx1; $f.dx2 = dx2; $f.dy = dy; $f.dy1 = dy1; $f.dy2 = dy2; $f.gWidth = gWidth; $f.i = i; $f.i$1 = i$1; $f.i$10 = i$10; $f.i$11 = i$11; $f.i$12 = i$12; $f.i$13 = i$13; $f.i$14 = i$14; $f.i$15 = i$15; $f.i$16 = i$16; $f.i$2 = i$2; $f.i$3 = i$3; $f.i$4 = i$4; $f.i$5 = i$5; $f.i$6 = i$6; $f.i$7 = i$7; $f.i$8 = i$8; $f.i$9 = i$9; $f.j = j; $f.l = l; $f.l1 = l1; $f.l2 = l2; $f.line = line; $f.line$1 = line$1; $f.lines = lines; $f.lt = lt; $f.npos = npos; $f.ox = ox; $f.oy = oy; $f.p1 = p1; $f.p2 = p2; $f.points = points; $f.pos = pos; $f.r1 = r1; $f.r2 = r2; $f.ra1 = ra1; $f.ra2 = ra2; $f.step = step; $f.steps = steps; $f.w = w; $f.w1 = w1; $f.w1_ = w1_; $f.w1_$1 = w1_$1; $f.w2 = w2; $f.w2_ = w2_; $f.w2_$1 = w2_$1; $f.wRat = wRat; $f.wd = wd; $f.x = x; $f.x$1 = x$1; $f.x$10 = x$10; $f.x$11 = x$11; $f.x$12 = x$12; $f.x$13 = x$13; $f.x$14 = x$14; $f.x$15 = x$15; $f.x$16 = x$16; $f.x$17 = x$17; $f.x$18 = x$18; $f.x$19 = x$19; $f.x$2 = x$2; $f.x$20 = x$20; $f.x$21 = x$21; $f.x$22 = x$22; $f.x$23 = x$23; $f.x$24 = x$24; $f.x$25 = x$25; $f.x$26 = x$26; $f.x$27 = x$27; $f.x$28 = x$28; $f.x$29 = x$29; $f.x$3 = x$3; $f.x$30 = x$30; $f.x$31 = x$31; $f.x$32 = x$32; $f.x$33 = x$33; $f.x$34 = x$34; $f.x$35 = x$35; $f.x$36 = x$36; $f.x$37 = x$37; $f.x$38 = x$38; $f.x$39 = x$39; $f.x$4 = x$4; $f.x$40 = x$40; $f.x$41 = x$41; $f.x$5 = x$5; $f.x$6 = x$6; $f.x$7 = x$7; $f.x$8 = x$8; $f.x$9 = x$9; $f.x1 = x1; $f.x1_ = x1_; $f.x2 = x2; $f.x2_ = x2_; $f.xa = xa; $f.y1 = y1; $f.y1_ = y1_; $f.y2 = y2; $f.y2_ = y2_; $f.ya = ya; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.GenerateOutline = GenerateOutline;
+	scale = function(s, a) {
+		var _i, _i$1, _ref, _ref$1, a, ar, i, s;
+		_ref = a;
+		_i = 0;
+		while (true) {
+			if (!(_i < _ref.$length)) { break; }
+			ar = ((_i < 0 || _i >= _ref.$length) ? ($throwRuntimeError("index out of range"), undefined) : _ref.$array[_ref.$offset + _i]);
+			_ref$1 = ar;
+			_i$1 = 0;
+			while (true) {
+				if (!(_i$1 < _ref$1.$length)) { break; }
+				i = _i$1;
+				((i < 0 || i >= ar.$length) ? ($throwRuntimeError("index out of range"), undefined) : ar.$array[ar.$offset + i] = ((i < 0 || i >= ar.$length) ? ($throwRuntimeError("index out of range"), undefined) : ar.$array[ar.$offset + i]) * (s));
+				_i$1++;
+			}
+			_i++;
+		}
+	};
 	eq = function(a, b) {
 		var a, b;
 		return math.Abs(a - b) < 1e-12;
@@ -20171,7 +20245,7 @@ $packages["ogeman.com/lamp"] = (function() {
 		dy = _tmp$5;
 		return y0 + dy / dx * (yp - x0);
 	};
-	Config.init("", [{prop: "Radius", name: "Radius", anonymous: false, exported: true, typ: $Float64, tag: ""}, {prop: "StartAlpha", name: "StartAlpha", anonymous: false, exported: true, typ: $Float64, tag: ""}, {prop: "DAlpha", name: "DAlpha", anonymous: false, exported: true, typ: $Float64, tag: ""}, {prop: "NoSteps", name: "NoSteps", anonymous: false, exported: true, typ: $Int, tag: ""}, {prop: "CDepth", name: "CDepth", anonymous: false, exported: true, typ: $Float64, tag: ""}, {prop: "NoStripes", name: "NoStripes", anonymous: false, exported: true, typ: $Int, tag: ""}, {prop: "T", name: "T", anonymous: false, exported: true, typ: $Float64, tag: ""}, {prop: "Ls", name: "Ls", anonymous: false, exported: true, typ: arrayType, tag: ""}, {prop: "Wr", name: "Wr", anonymous: false, exported: true, typ: arrayType, tag: ""}, {prop: "Res", name: "Res", anonymous: false, exported: true, typ: $Int, tag: ""}]);
+	Config.init("", [{prop: "Radius", name: "Radius", anonymous: false, exported: true, typ: $Float64, tag: ""}, {prop: "StartAlpha", name: "StartAlpha", anonymous: false, exported: true, typ: $Float64, tag: ""}, {prop: "DAlpha", name: "DAlpha", anonymous: false, exported: true, typ: $Float64, tag: ""}, {prop: "NoSteps", name: "NoSteps", anonymous: false, exported: true, typ: $Int, tag: ""}, {prop: "CDepth", name: "CDepth", anonymous: false, exported: true, typ: $Float64, tag: ""}, {prop: "NoStripes", name: "NoStripes", anonymous: false, exported: true, typ: $Int, tag: ""}, {prop: "T", name: "T", anonymous: false, exported: true, typ: $Float64, tag: ""}, {prop: "Ls", name: "Ls", anonymous: false, exported: true, typ: arrayType, tag: ""}, {prop: "Wr", name: "Wr", anonymous: false, exported: true, typ: arrayType, tag: ""}, {prop: "Res", name: "Res", anonymous: false, exported: true, typ: $Int, tag: ""}, {prop: "Scale", name: "Scale", anonymous: false, exported: true, typ: $Float64, tag: ""}]);
 	$init = function() {
 		$pkg.$init = function() {};
 		/* */ var $f, $c = false, $s = 0, $r; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
@@ -20186,11 +20260,11 @@ $packages["ogeman.com/lamp"] = (function() {
 	return $pkg;
 })();
 $packages["ogeman.com/lamp/lampjs"] = (function() {
-	var $pkg = {}, $init, fmt, js, lamp, Mesh, ptrType, funcType, mapType, sliceType, arrayType, sliceType$1, arrayType$1, sliceType$2, main, GenerateMesh;
+	var $pkg = {}, $init, fmt, js, lamp, Mesh, ptrType, funcType, mapType, arrayType, sliceType, sliceType$1, arrayType$1, sliceType$2, main, GenerateMesh;
 	fmt = $packages["fmt"];
 	js = $packages["github.com/gopherjs/gopherjs/js"];
 	lamp = $packages["ogeman.com/lamp"];
-	Mesh = $pkg.Mesh = $newType(0, $kindStruct, "main.Mesh", true, "ogeman.com/lamp/lampjs", true, function(V1_, V2_, T1_, T2_, A_, No_) {
+	Mesh = $pkg.Mesh = $newType(0, $kindStruct, "main.Mesh", true, "ogeman.com/lamp/lampjs", true, function(V1_, V2_, T1_, T2_, A_, No_, Radius_, Height_, Length_) {
 		this.$val = this;
 		if (arguments.length === 0) {
 			this.V1 = sliceType$1.nil;
@@ -20199,6 +20273,9 @@ $packages["ogeman.com/lamp/lampjs"] = (function() {
 			this.T2 = sliceType$2.nil;
 			this.A = 0;
 			this.No = 0;
+			this.Radius = 0;
+			this.Height = 0;
+			this.Length = 0;
 			return;
 		}
 		this.V1 = V1_;
@@ -20207,12 +20284,15 @@ $packages["ogeman.com/lamp/lampjs"] = (function() {
 		this.T2 = T2_;
 		this.A = A_;
 		this.No = No_;
+		this.Radius = Radius_;
+		this.Height = Height_;
+		this.Length = Length_;
 	});
 	ptrType = $ptrType(js.Object);
 	funcType = $funcType([ptrType], [Mesh], false);
 	mapType = $mapType($String, $emptyInterface);
-	sliceType = $sliceType($emptyInterface);
 	arrayType = $arrayType($Float64, 3);
+	sliceType = $sliceType($emptyInterface);
 	sliceType$1 = $sliceType(arrayType);
 	arrayType$1 = $arrayType($Int, 3);
 	sliceType$2 = $sliceType(arrayType$1);
@@ -20220,28 +20300,27 @@ $packages["ogeman.com/lamp/lampjs"] = (function() {
 		$global.lampjs = $externalize($makeMap($String.keyFor, [{ k: "GenerateMesh", v: new funcType(GenerateMesh) }]), mapType);
 	};
 	GenerateMesh = function(a) {
-		var _r, _r$1, _r$2, _tuple, a, aa, conf, no, t1, t2, v1, v2, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _tuple = $f._tuple; a = $f.a; aa = $f.aa; conf = $f.conf; no = $f.no; t1 = $f.t1; t2 = $f.t2; v1 = $f.v1; v2 = $f.v2; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		console.log("ej");
-		_r = fmt.Println(new sliceType([new $String("aaa"), new $jsObjectPtr(a)])); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		var _r, _r$1, _tuple, a, aa, conf, height, length, no, radius, t1, t2, v1, v2, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _tuple = $f._tuple; a = $f.a; aa = $f.aa; conf = $f.conf; height = $f.height; length = $f.length; no = $f.no; radius = $f.radius; t1 = $f.t1; t2 = $f.t2; v1 = $f.v1; v2 = $f.v2; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		conf = new lamp.Config.ptr($parseFloat(a.radius), $parseFloat(a.startAlpha) / 180 * 3.1415, $parseFloat(a.dAlpha) / 180 * 3.1415, $parseInt(a.noSteps) >> 0, $parseFloat(a.cDepth), $parseInt(a.noStripes) >> 0, $parseFloat(a.t), $toNativeArray($kindFloat64, [$parseFloat(a.ls[0]), $parseFloat(a.ls[1]), $parseFloat(a.ls[2])]), $toNativeArray($kindFloat64, [$parseFloat(a.wr[0]), $parseFloat(a.wr[1]), $parseFloat(a.wr[2])]), $parseInt(a.res) >> 0, $parseFloat(a.sc));
+		_r = fmt.Println(new sliceType([new conf.constructor.elem(conf)])); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		_r;
-		console.log(a);
-		conf = new lamp.Config.ptr($parseFloat(a.radius), $parseFloat(a.startAlpha), $parseFloat(a.dAlpha), $parseInt(a.noSteps) >> 0, $parseFloat(a.cDepth), $parseInt(a.noStripes) >> 0, $parseFloat(a.t), $toNativeArray($kindFloat64, [$parseFloat(a.ls[0]), $parseFloat(a.ls[1]), $parseFloat(a.ls[2])]), $toNativeArray($kindFloat64, [$parseFloat(a.wr[0]), $parseFloat(a.wr[1]), $parseFloat(a.wr[2])]), $parseInt(a.res) >> 0);
-		_r$1 = fmt.Println(new sliceType([new conf.constructor.elem(conf)])); /* */ $s = 2; case 2: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
-		_r$1;
-		_r$2 = lamp.GenerateMesh($clone(conf, lamp.Config)); /* */ $s = 3; case 3: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
-		_tuple = _r$2;
+		_r$1 = lamp.GenerateMesh($clone(conf, lamp.Config)); /* */ $s = 2; case 2: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+		_tuple = _r$1;
 		v1 = _tuple[0];
 		v2 = _tuple[1];
 		t1 = _tuple[2];
 		t2 = _tuple[3];
 		aa = _tuple[4];
 		no = _tuple[5];
-		$s = -1; return new Mesh.ptr(v1, v2, t1, t2, aa, no);
-		/* */ } return; } if ($f === undefined) { $f = { $blk: GenerateMesh }; } $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._tuple = _tuple; $f.a = a; $f.aa = aa; $f.conf = conf; $f.no = no; $f.t1 = t1; $f.t2 = t2; $f.v1 = v1; $f.v2 = v2; $f.$s = $s; $f.$r = $r; return $f;
+		radius = _tuple[6];
+		height = _tuple[7];
+		length = _tuple[8];
+		$s = -1; return new Mesh.ptr(v1, v2, t1, t2, aa, no, radius, height, length);
+		/* */ } return; } if ($f === undefined) { $f = { $blk: GenerateMesh }; } $f._r = _r; $f._r$1 = _r$1; $f._tuple = _tuple; $f.a = a; $f.aa = aa; $f.conf = conf; $f.height = height; $f.length = length; $f.no = no; $f.radius = radius; $f.t1 = t1; $f.t2 = t2; $f.v1 = v1; $f.v2 = v2; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.GenerateMesh = GenerateMesh;
-	Mesh.init("", [{prop: "V1", name: "V1", anonymous: false, exported: true, typ: sliceType$1, tag: ""}, {prop: "V2", name: "V2", anonymous: false, exported: true, typ: sliceType$1, tag: ""}, {prop: "T1", name: "T1", anonymous: false, exported: true, typ: sliceType$2, tag: ""}, {prop: "T2", name: "T2", anonymous: false, exported: true, typ: sliceType$2, tag: ""}, {prop: "A", name: "A", anonymous: false, exported: true, typ: $Float64, tag: ""}, {prop: "No", name: "No", anonymous: false, exported: true, typ: $Int, tag: ""}]);
+	Mesh.init("", [{prop: "V1", name: "V1", anonymous: false, exported: true, typ: sliceType$1, tag: ""}, {prop: "V2", name: "V2", anonymous: false, exported: true, typ: sliceType$1, tag: ""}, {prop: "T1", name: "T1", anonymous: false, exported: true, typ: sliceType$2, tag: ""}, {prop: "T2", name: "T2", anonymous: false, exported: true, typ: sliceType$2, tag: ""}, {prop: "A", name: "A", anonymous: false, exported: true, typ: $Float64, tag: ""}, {prop: "No", name: "No", anonymous: false, exported: true, typ: $Int, tag: ""}, {prop: "Radius", name: "Radius", anonymous: false, exported: true, typ: $Float64, tag: ""}, {prop: "Height", name: "Height", anonymous: false, exported: true, typ: $Float64, tag: ""}, {prop: "Length", name: "Length", anonymous: false, exported: true, typ: $Float64, tag: ""}]);
 	$init = function() {
 		$pkg.$init = function() {};
 		/* */ var $f, $c = false, $s = 0, $r; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:

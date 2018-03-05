@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Lamp test</title>
+        <script src="three.min.js"></script>
+        <script src="http://threejs.org/examples/js/controls/OrbitControls.js"></script>
+        <script src="lampjs.js"></script>
+        <script src="lampel.js"></script>
+        <style>
+            #drawing {
+                margin-left: auto;
+                margin-right: auto;
+                position: relative;
+                width: 95%;
+                height: 600px;
+            }
+            .row {
+                padding: 0.3em 5%;
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .row > span {
+                text-align: center;
+                margin: 0.3em;
+                width: 6rem;
+            }
+            .row > span > input {
+                width: 6rem;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body> 
+        <center><h1>Lamp Design</h1></center>
+        <div id="drawing"></div>
+        <form class="config">
+            <div class="row">
+                <span>Inner radius: <input id="r"  type="number" value="100" onchange="change()"></span>
+                <span>Angle:        <input id="a"  type="number" value="23" onchange="change()"></span>
+                <span>Start angle:  <input id="sa" type="number" value="0" onchange="change()"></span>
+                <span>#Steps:       <input id="no" type="number" value="11" onchange="change()"></span>
+                <span>#Stripes:     <input id="st" type="number" value="12" onchange="change()"></span>
+                <span>Cut depth:    <input id="c"  type="number" value="6" onchange="change()"></span>
+                <span>Thickness:    <input id="t"  type="number" value="5" onchange="change()"></span>
+            </div>
+            <div class="row">
+                <span>Length start: <input id="l1" type="number" value="220" onchange="change()"></span>
+                <span>Length mid:   <input id="l2" type="number" value="230" onchange="change()"></span>
+                <span>Length end::  <input id="l3" type="number" value="60" onchange="change()"></span>
+            </div>
+            <div class="row">
+                <span>Width start:  <input id="w1" type="number" value="0.5" onchange="change()"></span>
+                <span>Width mid:    <input id="w2" type="number" value="0.5" onchange="change()"></span>
+                <span>Width end::   <input id="w3" type="number" value="0.5" onchange="change()"></span>
+            </div>
+            <div class="row">
+                <span>Resolution:  <input id="res" type="number" value="15" onchange="change()"></span>
+            </div>
+        </form>
+        <script>
+            var dwg
+            function g(id) {
+                return document.getElementById(id).value*1
+            }
+            function gc() {
+                let conf = {
+                    radius: g("r"),
+                    startAlpha: g("sa")/180*3.1415,
+                    dAlpha: g("a")/180*3.1415,
+                    noSteps: g("no"),
+                    cDepth: g("c"),
+                    noStripes: g("st"),
+                    t: g("t"),
+                    ls: [g("l1"),g("l2"),g("l3")],
+                    wr: [g("w1"),g("w2"),g("w3")],
+                    res: g("res")
+                }
+                return conf
+            }
+            function change() {
+                dwg.setGeometry(gc())
+            }
+            dwg = lampel(
+                window,
+                window.lampjs,
+                document.getElementById("drawing"),
+                gc(),
+            );
+            // Call this any time we want to change the geometry to something else
+            change()
+        </script>
+    </body>
+</html>

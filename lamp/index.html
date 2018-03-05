@@ -121,7 +121,7 @@
             }
             function change() {
                 let gg = gc()
-                window.history.pushState({state:Math.random()},"", "/?desc=" + encodeURI(JSON.stringify(gg)));
+                window.history.pushState({state:Math.random()},"", "?desc=" + encodeURI(JSON.stringify(gg)));
                 dwg.setGeometry(gg)
             }
             dwg = lampel(

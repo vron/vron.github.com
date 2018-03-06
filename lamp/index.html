@@ -87,24 +87,26 @@
             var sset = s
             var query = getQueryParams(document.location.search);
             if(query.desc) {
-            let dd = JSON.parse(query.desc)
-            console.log("START", dd);
+                let dd = JSON.parse(query.desc)
+                console.log("go query START", dd);
 
-            s("r", dd.radius)
-            s("sa", dd.startAlpha)
-            s("a", dd.dAlpha)
-            s("no", dd.noSteps)
-            s("c", dd.cDepth)
-            s("st", dd.noStripes)
-            s("t", dd.t)
-            [s("l1",dd.ls[0]),s("l2",dd.ls[1]),s("l3",dd.ls[2])]
-            s("w1",dd.wr[0])
-            s("w2",dd.wr[1])
-            s("w3",dd.wr[2])
+                s("r", dd.radius)
+                s("sa", dd.startAlpha)
+                s("a", dd.dAlpha)
+                s("no", dd.noSteps)
+                s("c", dd.cDepth)
+                s("st", dd.noStripes)
+                s("t", dd.t)
+                s("l1",dd.ls[0])
+                s("l2",dd.ls[1])
+                s("l3",dd.ls[2])
+                s("w1",dd.wr[0])
+                s("w2",dd.wr[1])
+                s("w3",dd.wr[2])
 
-            s("res", dd.res)
-            s("sc", dd.sc)
-        }
+                s("res", dd.res)
+                s("sc", dd.sc)
+            }
             var dwg
             function g(id) {
                 return document.getElementById(id).value*1

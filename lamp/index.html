@@ -60,6 +60,11 @@
             <div class="row">
                 <span>Scale:  <input id="sc" type="number" value="1.0" onchange="change()"></span>
             </div>
+            <div class="row">
+                <span>OUT: Radius:  <input id="or" type="number" value="1.0"></span>
+                <span>OUT: Height:  <input id="oh" type="number" value="1.0"></span>
+                <span>OUT: Length:  <input id="ol" type="number" value="1.0"></span>
+            </div>
         </form>
         <script>
             function getQueryParams(qs) {
@@ -75,15 +80,16 @@
                 return params;
             }
 
+            // Set the form on load
+            function s(id, v) {
+                return document.getElementById(id).value = v
+            }
+            var sset = s
             var query = getQueryParams(document.location.search);
             if(query.desc) {
             let dd = JSON.parse(query.desc)
             console.log("START", dd);
 
-            // Set the form on load
-            function s(id, v) {
-                return document.getElementById(id).value = v
-            }
             s("r", dd.radius)
             s("sa", dd.startAlpha)
             s("a", dd.dAlpha)
@@ -123,7 +129,12 @@
                 let gg = gc()
                 console.log("pushing")
                 window.history.pushState({state:Math.random()},"", "/lamp/?desc=" + encodeURI(JSON.stringify(gg)));
-                dwg.setGeometry(gg)
+                let g = lampjs.GenerateMesh(gg)
+                console.log("got g", g)
+                sset("oh", g.Height)
+                sset("or", g.Radius)
+                sset("ol", g.Length)
+                dwg.setGeometry(g)
             }
             dwg = lampel(
                 window,
